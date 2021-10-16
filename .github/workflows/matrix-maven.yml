@@ -1,0 +1,44 @@
+## A reusable Workflow for a Matrix Java Build with a Test Report
+
+name: Java CI with Maven
+
+on:
+  workflow_call:
+    inputs:
+      java-versions:
+        description: Java versions to include in the matrix build. Defaults to Java 8, 11.
+        type: string
+        default: "[ \"8\", \"11\" ]"
+        required: false
+      java-distros:
+        description: Java distributions to include in the matrix build. Defaults to zulu and temurin. 
+        type: string
+        default: "[ \"zulu\", \"temurin\" ]"
+        required: false    
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java-version: ${{fromJson(inputs.java-versions)}}
+        java-distro: ${{fromJson(inputs.java-distros)}}
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up JDK ${{ matrix.java-version }} ${{ matrix.java-distro }}
+      uses: actions/setup-java@v2
+      with:
+        java-version: ${{ matrix.java-version }}
+        distribution: ${{ matrix.java-distro }}
+        cache: 'maven'
+    - name: Build with Maven
+      run: mvn -B package --file pom.xml
+
+    - name: Test Report
+      uses: dorny/test-reporter@v1
+      if: success() || failure()    # run this step even if previous step failed
+      with:
+        name: JUnit Tests           # Name of the check run which will be created
+        path: target/**/TEST-*.xml  # Path to test results
+        reporter: java-junit        # Format of test results
