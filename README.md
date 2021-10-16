@@ -4,7 +4,7 @@ Reusable GitHub Actions workflows that can be shared between projects -- by me o
 
 ## Java / Maven Matrix Build
 
-[This is](blob/main/.github/workflows/matrix-maven.yml) a simple Java/Maven build workflow.
+[This is](http://github.com/geoffreywiseman/workflows/blob/main/.github/workflows/matrix-maven.yml) a simple Java/Maven build workflow.
 
 Uses a matrix build strategy to build by default in:
     - all LTS versions of Java (8, 11)
